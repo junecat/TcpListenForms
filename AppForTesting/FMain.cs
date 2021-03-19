@@ -11,20 +11,54 @@ using System.Windows.Forms;
 using System.Threading;
 using System.Net;
 using System.Net.Sockets;
+using System.IO;
+using System.Text.Json;
 
 namespace TcpListenForms {
-    public partial class Form1 : Form {
-        public Form1() {
+    public partial class FMain : Form {
+        public FMain() {
             InitializeComponent();
             Shown += Form1_Shown;
+            FormClosing += FMain_FormClosing;
+        }
+
+        private void FMain_FormClosing(object sender, FormClosingEventArgs e) {
+            File.WriteAllText(Jpath(), JsonSerializer.Serialize(pList));
+
+            try {
+                using (TcpClient tcpClient = new TcpClient()) {
+                    tcpClient.Connect("127.0.0.1", 12496);
+                    NetworkStream netStream = tcpClient.GetStream();
+                    byte[] buffer = new byte[100];
+                    buffer[0] = (byte)'.';
+                    netStream.Write(buffer, 0, 1);
+                    netStream.Read(buffer, 0, 100);
+                    netStream.Close();
+                    tcpClient.Close();
+                }
+            }
+            catch (Exception ex) {
+                Debug.Print($"Exception: {ex.Message}");
+            }
+        }
+
+        List<Person> pList;
+        Thread srvThread;
+
+        string Jpath() {
+            var fldPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            var jpath = Path.Combine(fldPath, "mynotebook.json");
+            return jpath;
         }
 
         private void Form1_Shown(object sender, EventArgs e) {
-            
-            
-            
+            if (File.Exists(Jpath()))
+                pList = JsonSerializer.Deserialize<List<Person>>(File.ReadAllText(Jpath()));
+            else
+                pList = new List<Person>();
+
             // start server for 
-            Thread srvThread = new Thread( new ThreadStart(TcpServer) );
+            srvThread = new Thread( new ThreadStart(TcpServer) );
             srvThread.Start();
         }
         void TcpServer() {
@@ -35,8 +69,10 @@ namespace TcpListenForms {
                 server = new TcpListener(localAddr, 12496);
 
                 // запуск слушателя
+                bool stay_connected = true;
                 server.Start();
-                while (true) {
+                
+                while (stay_connected) {
                     // получаем входящее подключение
                     TcpClient client = server.AcceptTcpClient();
                     Console.WriteLine("Подключен клиент. Выполнение запроса...");
@@ -54,6 +90,8 @@ namespace TcpListenForms {
                         Debug.Print($"{len}: {s}");
                         stream.Write(buffer, 0, len);
                     } while (s != ".");
+                    // Хватит слушать
+                    stay_connected = false;
                     byte[] buf1 = new byte[4];
                     buf1[0] = (byte)'b';
                     buf1[1] = (byte)'y';
@@ -67,10 +105,7 @@ namespace TcpListenForms {
             catch(Exception ex) {
                 Debug.Print($"Error {ex.Message}");
             }
-
-
-
-
+            Thread.CurrentThread.Abort();
         }
     }
 }

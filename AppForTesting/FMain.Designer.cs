@@ -1,6 +1,6 @@
 ﻿
 namespace TcpListenForms {
-    partial class Form1 {
+    partial class FMain {
         /// <summary>
         /// Required designer variable.
         /// </summary>
