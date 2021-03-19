@@ -20,6 +20,10 @@ namespace TcpListenForms {
         }
 
         private void Form1_Shown(object sender, EventArgs e) {
+            
+            
+            
+            // start server for 
             Thread srvThread = new Thread( new ThreadStart(TcpServer) );
             srvThread.Start();
         }
