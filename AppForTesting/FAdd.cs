@@ -18,7 +18,9 @@ namespace TcpListenForms {
         }
 
         Person _p;
-        public void InitData(Person p) {
+        FMain parentForm;
+        public void InitData(Person p, FMain parent) {
+            parentForm = parent;
             if (p!=null) {
                 string tmpj = JsonSerializer.Serialize<Person>(p);
                 _p = JsonSerializer.Deserialize<Person>(tmpj);
@@ -30,7 +32,8 @@ namespace TcpListenForms {
         }
 
         private void SaveBtn_Click(object sender, EventArgs e) {
-
+            parentForm.AddOrUpdate(_p);
+            Close();
         }
     }
 }

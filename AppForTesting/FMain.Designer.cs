@@ -25,7 +25,7 @@ namespace TcpListenForms {
         /// </summary>
         private void InitializeComponent() {
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.button1 = new System.Windows.Forms.Button();
+            this.addBtn = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -44,24 +44,24 @@ namespace TcpListenForms {
             this.dataGridView1.Size = new System.Drawing.Size(588, 351);
             this.dataGridView1.TabIndex = 0;
             // 
-            // button1
+            // addBtn
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(483, 369);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(117, 30);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "Add new";
-            this.button1.UseVisualStyleBackColor = true;
+            this.addBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.addBtn.Location = new System.Drawing.Point(483, 369);
+            this.addBtn.Name = "addBtn";
+            this.addBtn.Size = new System.Drawing.Size(117, 30);
+            this.addBtn.TabIndex = 1;
+            this.addBtn.Text = "Add new";
+            this.addBtn.UseVisualStyleBackColor = true;
             // 
-            // Form1
+            // FMain
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(612, 404);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.addBtn);
             this.Controls.Add(this.dataGridView1);
             this.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.Name = "Form1";
+            this.Name = "FMain";
             this.Text = "MainForm";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
@@ -71,7 +71,7 @@ namespace TcpListenForms {
         #endregion
 
         private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button addBtn;
     }
 }
 

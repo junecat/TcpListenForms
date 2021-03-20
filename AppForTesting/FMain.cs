@@ -20,6 +20,37 @@ namespace TcpListenForms {
             InitializeComponent();
             Shown += Form1_Shown;
             FormClosing += FMain_FormClosing;
+            addBtn.Click += AddBtn_Click;
+        }
+
+        List<Person> pList;
+        Thread srvThread;
+
+        private void AddBtn_Click(object sender, EventArgs e) {
+            FAdd fAdd = new FAdd();
+            fAdd.InitData(null, this);
+            fAdd.Show();
+        }
+
+        public void AddOrUpdate(Person p) {
+            if (p.Id == 0) {
+                p.Id = GetNextId();
+                pList.Add(p);
+            }
+            else {
+                Person pPrev = pList.First<Person>(x => x.Id == p.Id);
+                pPrev = p;
+            }
+            dataGridView1.DataSource = pList;
+            dataGridView1.Update();
+            dataGridView1.Refresh();
+        }
+
+        int GetNextId() {
+            if (pList.Count == 0)
+                return 1;
+            int m = pList.Max<Person>( x=>x.Id );
+            return m + 1;
         }
 
         private void FMain_FormClosing(object sender, FormClosingEventArgs e) {
@@ -42,8 +73,7 @@ namespace TcpListenForms {
             }
         }
 
-        List<Person> pList;
-        Thread srvThread;
+
 
         string Jpath() {
             var fldPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
@@ -56,6 +86,7 @@ namespace TcpListenForms {
                 pList = JsonSerializer.Deserialize<List<Person>>(File.ReadAllText(Jpath()));
             else
                 pList = new List<Person>();
+            dataGridView1.DataSource = pList;
 
             // start server for 
             srvThread = new Thread( new ThreadStart(TcpServer) );
