@@ -21,6 +21,20 @@ namespace TcpListenForms {
             Shown += Form1_Shown;
             FormClosing += FMain_FormClosing;
             addBtn.Click += AddBtn_Click;
+            dataGridView1.KeyDown += DataGridView1_KeyDown;
+            dataGridView1.KeyPress += DataGridView1_KeyPress;
+        }
+
+        private void DataGridView1_KeyDown(object sender, KeyEventArgs e) {
+            if (e.KeyCode == Keys.Enter) 
+                e.Handled = true;
+        }
+
+        private void DataGridView1_KeyPress(object sender, KeyPressEventArgs e) {
+            if (e.KeyChar == (Char)Keys.Enter) {
+                int i = dataGridView1.CurrentRow.Index;
+                MessageBox.Show(i.ToString());
+            }
         }
 
         List<Person> pList;
@@ -41,9 +55,9 @@ namespace TcpListenForms {
                 Person pPrev = pList.First<Person>(x => x.Id == p.Id);
                 pPrev = p;
             }
-            dataGridView1.DataSource = pList;
-            dataGridView1.Update();
+            dataGridView1.DataSource = null;
             dataGridView1.Refresh();
+            dataGridView1.DataSource = pList;
         }
 
         int GetNextId() {
