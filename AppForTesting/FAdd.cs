@@ -18,8 +18,8 @@ namespace TcpListenForms {
         }
 
         Person _p;
-        FMain parentForm;
-        public void InitData(Person p, FMain parent) {
+        FMain_v0 parentForm;
+        public void InitData(Person p, FMain_v0 parent) {
             parentForm = parent;
             if (p!=null) {
                 string tmpj = JsonSerializer.Serialize<Person>(p);

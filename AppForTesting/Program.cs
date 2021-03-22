@@ -11,6 +11,7 @@ namespace TcpListenForms {
         /// </summary>
         [STAThread]
         static void Main() {
+            Globals.BaseTestPort = 1200;
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new FMain());
