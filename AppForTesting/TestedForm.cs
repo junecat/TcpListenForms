@@ -9,115 +9,29 @@ using System.Text.Json;
 using System.Threading;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using Nancy.Hosting.Self;
 
 namespace TcpListenForms {
     public class TestedForm : Form{
         
-        int testport;
-        NancyHost nancyHost=null;
-
         public void OnShowingForm() {
-            // start server for debug 
-
-            try {
-                HostConfiguration hostConfigs = new HostConfiguration()
-                {
-                    UrlReservations = new UrlReservations() { CreateAutomatically = true }
-                };
-                nancyHost = new NancyHost(hostConfigs, new Uri($"http://localhost:{Globals.TestPort}"));
-                nancyHost.Start();
-                Logger.WriteLog($"Nancy REST TEST Server started(>>>) at port={Globals.TestPort}");
-
-                Globals.TForm = this;
-                Globals.TestPort++;
-            }
-            catch(Exception ex) {
-                Logger.WriteError(ex);
+            if (Globals.TForms != null) {
+                if (!Globals.TForms.ContainsKey(Name))
+                    Globals.TForms.Add(Name, this);
             }
         }
 
         public void OnClosingForm() {
-            if (nancyHost == null)
+            if (Globals.TForms == null)
                 return;
             try {
-                nancyHost.Stop();
-                Logger.WriteLog($"Nancy REST TEST Server stopped(<<<) at port={Globals.TestPort-1}");
+                if (Globals.TForms.ContainsKey(Name))
+                    Globals.TForms.Remove(Name);
             }
             catch (Exception ex) {
                 Logger.WriteError(ex);
             }
-            finally {
-                Globals.TForm = null;
-                Globals.TestPort--;
-            }
         }
 
-        //void TestRestServer() {
-            
-        //    Debug.Print($"Hi from tcp-server, thread {Thread.CurrentThread.GetHashCode()}");
-        //    TcpListener server = null;
-        //    try {
-        //        IPAddress localAddr = IPAddress.Parse("127.0.0.1");
-        //        server = new TcpListener(localAddr, testport);
-
-        //        // запуск слушателя
-        //        bool stay_connected = true;
-        //        byte[] retbuf;
-        //        server.Start();
-
-
-        //        while (stay_connected) {
-        //            // получаем входящее подключение
-        //            Logger.WriteLog("Wait for accept");
-        //            TcpClient client = server.AcceptTcpClient();
-        //            Logger.WriteLog("Подключен клиент. Выполнение запроса...");
-        //            string s = "";
-        //            NetworkStream stream;
-        //            s = "";
-        //            // получаем сетевой поток для чтения и записи
-        //            stream = client.GetStream();
-        //            int len;
-        //            byte[] buffer0 = new byte[4];
-        //            len = stream.Read(buffer0, 0, 4);
-        //            if (len == 4) {
-        //                int jlen = buffer0[0] + buffer0[1] * 256 + buffer0[2] * 256 * 256;
-        //                byte[] buff = new byte[jlen];
-        //                len = stream.Read(buff, 0, jlen);
-        //                if (len == jlen) {
-        //                    MakeTests(buff);
-        //                    retbuf = Encoding.UTF8.GetBytes("test completed!");
-        //                    stream.Write(retbuf, 0, retbuf.Length);
-        //                    stream.Close();
-        //                    client.Close();
-        //                }
-        //                else {
-        //                    MessageBox.Show($"Несоответствие длинны буфера: {len}!={jlen}");
-        //                }
-        //            }
-        //            else {
-        //                if (len > 0) {
-        //                    // ожидаем "точку" - признак закрытия сокета
-        //                    string str = Encoding.UTF8.GetString(buffer0, 0, len);
-        //                    if (str == ".") {
-        //                        // Хватит слушать
-        //                        stay_connected = false;
-        //                        retbuf = Encoding.UTF8.GetBytes("bye!");
-        //                        stream.Write(retbuf, 0, retbuf.Length);
-        //                        stream.Close();
-        //                        client.Close();
-        //                    }
-        //                }
-        //            }
-        //            Thread.Sleep(50);
-        //            Logger.WriteLog($"stream closed, stay_connected={stay_connected}");
-        //        }
-        //    }
-        //    catch (Exception ex) {
-        //        Debug.Print($"Error {ex.Message}");
-        //    }
-        //    Thread.CurrentThread.Abort();
-        //}
 
         void MakeTests(byte[] buff) {
             // десериализуем буфер

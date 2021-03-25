@@ -14,6 +14,7 @@ namespace ClientForAutoTesting {
 
     public class TestStep {
         public int Id { get; set; }
+        public string FormName { get; set; }
         public string ControlName { get; set; }
         public ControlActions ControlAction { get; set; }
         public string Content { get; set; }

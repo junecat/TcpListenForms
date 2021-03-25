@@ -23,8 +23,11 @@ namespace TcpListenForms {
                 var jsonStr = this.Request.Body.AsString();
                 Logger.WriteLog($"jsonStr={jsonStr}");
                 TestStep ts = JsonSerializer.Deserialize<TestStep>(jsonStr);
-                if (Globals.TForm != null) {
-                    Globals.TForm.MakeTestStep(ts);
+                if (Globals.TForms != null) {
+                    if (Globals.TForms.ContainsKey(ts.FormName)) {
+                        TestedForm tf = Globals.TForms[ts.FormName];
+                        tf.MakeTestStep(ts);
+                    }
                 }
 
 

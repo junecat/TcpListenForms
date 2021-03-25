@@ -12,6 +12,7 @@ using System.Text.Json;
 using System.Net.Sockets;
 using System.Diagnostics;
 using RestSharp;
+using System.Threading;
 
 namespace ClientForAutoTesting {
     public partial class Form1 : Form {
@@ -44,6 +45,7 @@ namespace ClientForAutoTesting {
                 var restClient = new RestClient();
 
                 foreach ( TestStep ts in testSteps) {
+                    Thread.Sleep(100);
                     string t = JsonSerializer.Serialize(ts);
                     
                     RestRequest req = new RestRequest("http://localhost:1234/", Method.POST);
