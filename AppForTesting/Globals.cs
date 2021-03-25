@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace TcpListenForms {
     public static class Globals {
-        public static int BaseTestPort;
+        public static int TestPort;
+        public static TestedForm TForm { get; set; }
     }
 }

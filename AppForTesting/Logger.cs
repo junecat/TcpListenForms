@@ -34,6 +34,27 @@ namespace TcpListenForms {
             }
         }
 
+        public static void WriteError(Exception ex, string msgPrefix = "", bool writeToDb = true) {
+            string msg;
+            if (string.IsNullOrEmpty(msgPrefix)) msg = Environment.NewLine + GetExcetionAsString(ex);
+            else msg = Environment.NewLine + msgPrefix + Environment.NewLine + GetExcetionAsString(ex);
+            WriteLog(msg);
+        }
+
+        private static string GetExcetionAsString(Exception ex) {
+            if (ex != null) {
+                //if (ex.Message != null) s1 = ex.Message;
+                string s1 = ex.Message ?? String.Empty;
+                string s2 = ex.Source ?? String.Empty;
+                string s3 = ex.StackTrace ?? String.Empty;
+                return "-----------------1)Exception.Message:---------------------- \r\n" + s1 + Environment.NewLine +
+                       "-----------------2)Exception.Source:---------------------- \r\n" + s2 + Environment.NewLine +
+                       "-----------------3)Exception.StackTrace:---------------------- \r\n" + s3;
+            }
+            else
+                return String.Empty;
+        }
+
         public static string GetLogFileName(string baseFileName = null) {
             string dt = Regex.Replace(DateTime.Now.ToShortDateString(), @"[^\w\.-]", "-");
             string fullDir = GetTempDir() + @"Logs\";

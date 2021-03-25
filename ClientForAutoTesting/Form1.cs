@@ -9,32 +9,85 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Net;
 using System.Net.Sockets;
 using System.Diagnostics;
+using RestSharp;
 
 namespace ClientForAutoTesting {
     public partial class Form1 : Form {
+
+        int testport = 1234;
+        string baseUrl = "http://localhost:1234/";
+        RestClient restClient;
+
+
         public Form1() {
             InitializeComponent();
             linkLabel1.Click += LinkLabel1_Click;
             linkLabel2.Click += LinkLabel2_Click;
+            linkLabel3.Click += LinkLabel3_Click;
+            linkLabel4.Click += LinkLabel4_Click;
+            Shown += Form1_Shown;
+        }
+        private void Form1_Shown(object sender, EventArgs e) {
+            Location = new Point(-812, -85);
+            testContentTb.Text = ClientForAutoTesting.Properties.Settings.Default.TestContent;
         }
 
-        int testport = 1201;
+        private void LinkLabel4_Click(object sender, EventArgs e) {
+            ClientForAutoTesting.Properties.Settings.Default.TestContent = testContentTb.Text;
+            ClientForAutoTesting.Properties.Settings.Default.Save();
+
+            // ... to json
+            try {
+                List<TestStep> testSteps = JsonSerializer.Deserialize<List<TestStep>>(testContentTb.Text);
+                var restClient = new RestClient();
+
+                foreach ( TestStep ts in testSteps) {
+                    string t = JsonSerializer.Serialize(ts);
+                    
+                    RestRequest req = new RestRequest("http://localhost:1234/", Method.POST);
+                    req.RequestFormat = DataFormat.Json;
+                    req.AddBody(ts);
+                    var resp = restClient.Execute(req);
+
+
+                }
+
+
+
+            }
+            catch(Exception ex) {
+
+            }
+
+
+
+        }
+
+
+        private void LinkLabel3_Click(object sender, EventArgs e) {
+            string fp = GetFilePath("case2");
+            SendTestCase(fp, 1201);
+        }
+
 
         private void LinkLabel2_Click(object sender, EventArgs e) {
+            string fp = GetFilePath("case2");
+            SendTestCase(fp, 1201);
+        }
+
+        void SendTestCase(string filePath, int portNumber) {
             try {
                 using (TcpClient tcpClient = new TcpClient()) {
-                    tcpClient.Connect("127.0.0.1", testport);
+                    tcpClient.Connect("127.0.0.1", portNumber);
                     NetworkStream netStream = tcpClient.GetStream();
 
                     // get file
 
                     // read file to buffer
 
-                    byte[] jbuff = File.ReadAllBytes(GetFilePath());
+                    byte[] jbuff = File.ReadAllBytes(filePath);
                     int len = jbuff.Length;
                     byte[] hbuff = BitConverter.GetBytes(len);
                     netStream.Write(hbuff, 0, 4);
@@ -49,8 +102,8 @@ namespace ClientForAutoTesting {
             catch (Exception ex) {
                 Debug.Print($"Exception: {ex.Message}");
             }
-
         }
+
 
         void LinkLabel1_Click(object sender, EventArgs e) {
             TestStep ts0 = new TestStep();
@@ -77,13 +130,13 @@ namespace ClientForAutoTesting {
             {
                 WriteIndented = true,
             };
-            File.WriteAllText(GetFilePath(), JsonSerializer.Serialize(tc, joptions));
+            File.WriteAllText(GetFilePath("case2"), JsonSerializer.Serialize(tc, joptions));
 
         }
 
-        string GetFilePath() {
+        string GetFilePath(string case_name) {
             var fldPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            var jpath = Path.Combine(fldPath, "case0.json");
+            var jpath = Path.Combine(fldPath, $"{case_name}.json");
             return jpath;
         }
     }
